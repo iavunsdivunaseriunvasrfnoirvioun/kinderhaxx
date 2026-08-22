@@ -2983,13 +2983,11 @@ function Library:CreateWindow(...)
     });
 
     local WindowLabel = Library:CreateLabel({
-        Position = UDim2.new(0, 0, 0, 0);
-        Size = UDim2.new(1, 0, 0, 24);
+        Position = UDim2.new(0, 7, 0, 0);
+        Size = UDim2.new(0, 0, 0, 25);
         Text = Config.Title or '';
-        TextXAlignment = Enum.TextXAlignment.Center;
-        TextYAlignment = Enum.TextYAlignment.Center;
-        TextSize = 13;
-        ZIndex = 2;
+        TextXAlignment = Enum.TextXAlignment.Left;
+        ZIndex = 1;
         Parent = Inner;
     });
 
@@ -3065,14 +3063,19 @@ function Library:CreateWindow(...)
 
         local TabButton = Library:Create('Frame', {
             BackgroundColor3 = Color3.fromRGB(18, 19, 22);
-            BorderColor3 = Library.OutlineColor;
-            Size = UDim2.new(0, math.max(TabButtonWidth + 18, 65), 1, 0);
-            ZIndex = 1;
+            BorderSizePixel = 0;
+            Size = UDim2.new(0, math.max(TabButtonWidth + 18, 62), 1, 0);
+            ZIndex = 3;
             Parent = TabArea;
         });
 
-        Library:AddToRegistry(TabButton, {
-            BorderColor3 = 'OutlineColor';
+        local TabSeparator = Library:Create('Frame', {
+            BackgroundColor3 = Library.OutlineColor;
+            BorderSizePixel = 0;
+            Position = UDim2.new(1, -1, 0, 4);
+            Size = UDim2.new(0, 1, 1, -8);
+            ZIndex = 4;
+            Parent = TabButton;
         });
 
         local AccentLine = Library:Create('Frame', {
@@ -3081,7 +3084,7 @@ function Library:CreateWindow(...)
             Position = UDim2.new(0, 0, 1, -2);
             Size = UDim2.new(1, 0, 0, 2);
             Visible = false;
-            ZIndex = 3;
+            ZIndex = 5;
             Parent = TabButton;
         });
 
@@ -3095,7 +3098,7 @@ function Library:CreateWindow(...)
             Text = Name;
             TextSize = 13;
             TextColor3 = Color3.fromRGB(115, 118, 126);
-            ZIndex = 2;
+            ZIndex = 4;
             Parent = TabButton;
         });
 
@@ -3163,8 +3166,8 @@ function Library:CreateWindow(...)
             end;
 
             AccentLine.Visible = true;
-            TabButtonLabel.TextColor3 = Color3.fromRGB(225, 228, 235);
-            TabButton.BackgroundColor3 = Color3.fromRGB(22, 23, 27);
+            TabButtonLabel.TextColor3 = Color3.fromRGB(240, 242, 245);
+            TabButton.BackgroundColor3 = Color3.fromRGB(24, 25, 29);
             TabFrame.Visible = true;
         end;
 
@@ -3206,12 +3209,21 @@ function Library:CreateWindow(...)
             });
 
             local GroupboxLabel = Library:CreateLabel({
-                Size = UDim2.new(1, -16, 0, 18);
+                Size = UDim2.new(1, -16, 0, 16);
                 Position = UDim2.new(0, 8, 0, 4);
-                TextSize = 14;
+                TextSize = 13;
                 Text = Info.Name;
                 TextXAlignment = Enum.TextXAlignment.Left;
                 TextColor3 = Color3.fromRGB(205, 208, 215);
+                ZIndex = 5;
+                Parent = BoxInner;
+            });
+
+            local TitleSeparator = Library:Create('Frame', {
+                BackgroundColor3 = Color3.fromRGB(28, 29, 33);
+                BorderSizePixel = 0;
+                Position = UDim2.new(0, 8, 0, 20);
+                Size = UDim2.new(1, -16, 0, 1);
                 ZIndex = 5;
                 Parent = BoxInner;
             });
