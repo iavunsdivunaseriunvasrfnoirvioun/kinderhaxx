@@ -198,6 +198,12 @@ local ThemeManager = {} do
 		self.Library = lib
 	end
 
+	function ThemeManager:SetBuildType(...)
+		if self.Library then
+			return self.Library:SetBuildType(...)
+		end
+	end
+
 	function ThemeManager:BuildFolderTree()
 		local paths = {}
 
