@@ -122,15 +122,32 @@ function Library:AttemptSave()
     end;
 end;
 
-function Library:SetBuildType(buildName, versionStr)
-    Library.BuildName = buildName or Library.BuildName or 'Developer';
-    Library.BuildVersion = tostring(versionStr or Library.BuildVersion or '1.0.0'):gsub('^v', '');
+function Library:SetBuildType(...)
+    local args = { ... };
+    local buildName, versionStr;
+
+    if type(args[1]) == 'table' then
+        buildName = args[1].Build or args[1].BuildName or args[1][1];
+        versionStr = args[1].Version or args[1].BuildVersion or args[1][2];
+    else
+        buildName = args[1];
+        versionStr = args[2];
+    end;
+
+    if buildName ~= nil then
+        Library.BuildName = tostring(buildName);
+    end;
+    if versionStr ~= nil then
+        Library.BuildVersion = tostring(versionStr):gsub('^v', '');
+    end;
 
     if Library.FooterLeft and Library.FooterRight then
-        local hexColor = Library.AccentColor:ToHex();
-        Library.FooterLeft.Text = string.format('Build: <font color="#%s">%s</font>', hexColor, tostring(Library.BuildName));
-        Library.FooterRight.Text = string.format('[ <font color="#%s">v%s</font> ]', hexColor, tostring(Library.BuildVersion));
+        local hexColor = Library.AccentColor and Library.AccentColor:ToHex() or '008cf0';
+        Library.FooterLeft.Text = string.format('Build: <font color="#%s">%s</font>', hexColor, tostring(Library.BuildName or 'Developer'));
+        Library.FooterRight.Text = string.format('[ <font color="#%s">v%s</font> ]', hexColor, tostring(Library.BuildVersion or '1.0.0'));
     end;
+
+    return Library;
 end;
 
 function Library:Create(Class, Properties)
@@ -1829,6 +1846,10 @@ do
         return Textbox;
     end;
 
+    function Funcs:SetBuildType(...)
+        return Library:SetBuildType(...);
+    end;
+
     function Funcs:AddToggle(Idx, Info)
         assert(Info.Text, 'AddInput: Missing `Text` string.')
 
@@ -3076,7 +3097,7 @@ function Library:CreateWindow(...)
         Parent = Inner;
     });
 
-    local hexColor = Library.AccentColor:ToHex();
+    local hexColor = Library.AccentColor and Library.AccentColor:ToHex() or '008cf0';
     local FooterLeft = Library:CreateLabel({
         Position = UDim2.new(0, 8, 0, 0);
         Size = UDim2.new(0.5, -8, 1, 0);
@@ -3106,8 +3127,8 @@ function Library:CreateWindow(...)
     Library.FooterLeft = FooterLeft;
     Library.FooterRight = FooterRight;
 
-    function Window:SetBuildType(buildName, versionStr)
-        Library:SetBuildType(buildName, versionStr);
+    function Window:SetBuildType(...)
+        return Library:SetBuildType(...);
     end;
 
     function Window:SetWindowTitle(Title)
@@ -3119,6 +3140,10 @@ function Library:CreateWindow(...)
             Groupboxes = {};
             Tabboxes = {};
         };
+
+        function Tab:SetBuildType(...)
+            return Library:SetBuildType(...);
+        end;
 
         local TabButtonWidth = Library:GetTextBounds(Name, Library.Font, 13);
 
@@ -3665,4 +3690,5 @@ Players.PlayerAdded:Connect(OnPlayerChange);
 Players.PlayerRemoving:Connect(OnPlayerChange);
 
 getgenv().Library = Library
+getgenv().SetBuildType = function(...) return Library:SetBuildType(...) end
 return Library
