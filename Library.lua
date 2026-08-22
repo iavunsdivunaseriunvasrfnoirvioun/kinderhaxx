@@ -30,10 +30,10 @@ local Library = {
     HudRegistry = {};
 
     FontColor = Color3.fromRGB(205, 208, 215);
-    MainColor = Color3.fromRGB(20, 21, 24);
-    BackgroundColor = Color3.fromRGB(16, 17, 19);
-    AccentColor = Color3.fromRGB(225, 90, 105);
-    OutlineColor = Color3.fromRGB(34, 36, 40);
+    MainColor = Color3.fromRGB(19, 20, 24);
+    BackgroundColor = Color3.fromRGB(15, 16, 19);
+    AccentColor = Color3.fromRGB(108, 133, 233);
+    OutlineColor = Color3.fromRGB(32, 35, 42);
     RiskColor = Color3.fromRGB(255, 60, 60);
     SubTextColor = Color3.fromRGB(120, 124, 134);
 
@@ -1884,7 +1884,7 @@ do
 
         function Toggle:Display()
             ToggleInner.BackgroundColor3 = Toggle.Value and Library.AccentColor or Color3.fromRGB(22, 23, 26);
-            ToggleInner.BorderColor3 = Toggle.Value and Color3.fromRGB(170, 60, 72) or Library.OutlineColor;
+            ToggleInner.BorderColor3 = Toggle.Value and Library.AccentColorDark or Library.OutlineColor;
 
             Library.RegistryMap[ToggleInner].Properties.BackgroundColor3 = Toggle.Value and 'AccentColor' or 'MainColor';
             Library.RegistryMap[ToggleInner].Properties.BorderColor3 = Toggle.Value and 'AccentColorDark' or 'OutlineColor';
@@ -2691,17 +2691,19 @@ do
     });
 
     local WatermarkOuter = Library:Create('Frame', {
-        BorderColor3 = Color3.new(0, 0, 0);
-        Position = UDim2.new(0, 100, 0, -25);
-        Size = UDim2.new(0, 213, 0, 20);
+        BackgroundColor3 = Color3.new(0, 0, 0);
+        BorderSizePixel = 0;
+        AnchorPoint = Vector2.new(1, 0);
+        Position = UDim2.new(1, -15, 0, 15);
+        Size = UDim2.new(0, 215, 0, 24);
         ZIndex = 200;
         Visible = false;
         Parent = ScreenGui;
     });
 
     local WatermarkInner = Library:Create('Frame', {
-        BackgroundColor3 = Library.MainColor;
-        BorderColor3 = Library.AccentColor;
+        BackgroundColor3 = Color3.fromRGB(19, 20, 24);
+        BorderColor3 = Library.OutlineColor;
         BorderMode = Enum.BorderMode.Inset;
         Size = UDim2.new(1, 0, 1, 0);
         ZIndex = 201;
@@ -2709,63 +2711,52 @@ do
     });
 
     Library:AddToRegistry(WatermarkInner, {
-        BorderColor3 = 'AccentColor';
+        BackgroundColor3 = 'MainColor';
+        BorderColor3 = 'OutlineColor';
     });
 
-    local InnerFrame = Library:Create('Frame', {
-        BackgroundColor3 = Color3.new(1, 1, 1);
+    local WatermarkDot = Library:Create('Frame', {
+        BackgroundColor3 = Library.AccentColor;
         BorderSizePixel = 0;
-        Position = UDim2.new(0, 1, 0, 1);
-        Size = UDim2.new(1, -2, 1, -2);
+        AnchorPoint = Vector2.new(0, 0.5);
+        Position = UDim2.new(0, 5, 0.5, 0);
+        Size = UDim2.new(0, 2, 0, 14);
         ZIndex = 202;
         Parent = WatermarkInner;
     });
 
-    local Gradient = Library:Create('UIGradient', {
-        Color = ColorSequence.new({
-            ColorSequenceKeypoint.new(0, Library:GetDarkerColor(Library.MainColor)),
-            ColorSequenceKeypoint.new(1, Library.MainColor),
-        });
-        Rotation = -90;
-        Parent = InnerFrame;
-    });
-
-    Library:AddToRegistry(Gradient, {
-        Color = function()
-            return ColorSequence.new({
-                ColorSequenceKeypoint.new(0, Library:GetDarkerColor(Library.MainColor)),
-                ColorSequenceKeypoint.new(1, Library.MainColor),
-            });
-        end
+    Library:AddToRegistry(WatermarkDot, {
+        BackgroundColor3 = 'AccentColor';
     });
 
     local WatermarkLabel = Library:CreateLabel({
-        Position = UDim2.new(0, 5, 0, 0);
-        Size = UDim2.new(1, -4, 1, 0);
-        TextSize = 14;
+        Position = UDim2.new(0, 12, 0, 0);
+        Size = UDim2.new(1, -16, 1, 0);
+        TextSize = 13;
+        TextColor3 = Color3.fromRGB(205, 208, 215);
         TextXAlignment = Enum.TextXAlignment.Left;
+        TextYAlignment = Enum.TextYAlignment.Center;
         ZIndex = 203;
-        Parent = InnerFrame;
+        Parent = WatermarkInner;
     });
 
     Library.Watermark = WatermarkOuter;
     Library.WatermarkText = WatermarkLabel;
     Library:MakeDraggable(Library.Watermark);
 
-
-
     local KeybindOuter = Library:Create('Frame', {
         AnchorPoint = Vector2.new(0, 0.5);
-        BorderColor3 = Color3.new(0, 0, 0);
-        Position = UDim2.new(0, 10, 0.5, 0);
-        Size = UDim2.new(0, 210, 0, 20);
+        BackgroundColor3 = Color3.new(0, 0, 0);
+        BorderSizePixel = 0;
+        Position = UDim2.new(0, 15, 0.5, -100);
+        Size = UDim2.new(0, 200, 0, 24);
         Visible = false;
         ZIndex = 100;
         Parent = ScreenGui;
     });
 
     local KeybindInner = Library:Create('Frame', {
-        BackgroundColor3 = Library.MainColor;
+        BackgroundColor3 = Color3.fromRGB(19, 20, 24);
         BorderColor3 = Library.OutlineColor;
         BorderMode = Enum.BorderMode.Inset;
         Size = UDim2.new(1, 0, 1, 0);
@@ -2790,20 +2781,38 @@ do
         BackgroundColor3 = 'AccentColor';
     }, true);
 
-    local KeybindLabel = Library:CreateLabel({
-        Size = UDim2.new(1, 0, 0, 20);
-        Position = UDim2.fromOffset(5, 2),
-        TextXAlignment = Enum.TextXAlignment.Left,
-
-        Text = 'Keybinds';
-        ZIndex = 104;
+    local KeybindHeaderBar = Library:Create('Frame', {
+        BackgroundTransparency = 1;
+        Size = UDim2.new(1, 0, 0, 22);
+        ZIndex = 103;
         Parent = KeybindInner;
+    });
+
+    local KeybindLabel = Library:CreateLabel({
+        Size = UDim2.new(1, -12, 1, 0);
+        Position = UDim2.fromOffset(6, 0),
+        TextXAlignment = Enum.TextXAlignment.Left,
+        TextYAlignment = Enum.TextYAlignment.Center,
+        TextSize = 13,
+        Text = 'Keybinds';
+        TextColor3 = Color3.fromRGB(205, 208, 215);
+        ZIndex = 104;
+        Parent = KeybindHeaderBar;
+    });
+
+    local KeybindHeaderDivider = Library:Create('Frame', {
+        BackgroundColor3 = Library.OutlineColor;
+        BorderSizePixel = 0;
+        Position = UDim2.new(0, 0, 1, -1);
+        Size = UDim2.new(1, 0, 0, 1);
+        ZIndex = 104;
+        Parent = KeybindHeaderBar;
     });
 
     local KeybindContainer = Library:Create('Frame', {
         BackgroundTransparency = 1;
-        Size = UDim2.new(1, 0, 1, -20);
-        Position = UDim2.new(0, 0, 0, 20);
+        Size = UDim2.new(1, 0, 1, -22);
+        Position = UDim2.new(0, 0, 0, 22);
         ZIndex = 1;
         Parent = KeybindInner;
     });
@@ -2811,13 +2820,17 @@ do
     Library:Create('UIListLayout', {
         FillDirection = Enum.FillDirection.Vertical;
         SortOrder = Enum.SortOrder.LayoutOrder;
+        Padding = UDim.new(0, 2);
         Parent = KeybindContainer;
     });
 
     Library:Create('UIPadding', {
-        PaddingLeft = UDim.new(0, 5),
+        PaddingLeft = UDim.new(0, 6),
+        PaddingRight = UDim.new(0, 6),
+        PaddingTop = UDim.new(0, 4),
+        PaddingBottom = UDim.new(0, 4),
         Parent = KeybindContainer,
-    })
+    });
 
     Library.KeybindFrame = KeybindOuter;
     Library.KeybindContainer = KeybindContainer;
@@ -2965,11 +2978,11 @@ function Library:CreateWindow(...)
         Parent = ScreenGui;
     });
 
-    Library:MakeDraggable(Outer, 25);
+    Library:MakeDraggable(Outer, 26);
 
     local Inner = Library:Create('Frame', {
-        BackgroundColor3 = Library.MainColor;
-        BorderColor3 = Library.AccentColor;
+        BackgroundColor3 = Color3.fromRGB(19, 20, 24);
+        BorderColor3 = Library.OutlineColor;
         BorderMode = Enum.BorderMode.Inset;
         Position = UDim2.new(0, 1, 0, 1);
         Size = UDim2.new(1, -2, 1, -2);
@@ -2979,74 +2992,110 @@ function Library:CreateWindow(...)
 
     Library:AddToRegistry(Inner, {
         BackgroundColor3 = 'MainColor';
-        BorderColor3 = 'AccentColor';
+        BorderColor3 = 'OutlineColor';
+    });
+
+    local HeaderBar = Library:Create('Frame', {
+        BackgroundColor3 = Color3.fromRGB(15, 16, 19);
+        BorderSizePixel = 0;
+        Position = UDim2.new(0, 0, 0, 0);
+        Size = UDim2.new(1, 0, 0, 26);
+        ZIndex = 2;
+        Parent = Inner;
+    });
+
+    local HeaderAccentDot = Library:Create('Frame', {
+        BackgroundColor3 = Library.AccentColor;
+        BorderSizePixel = 0;
+        AnchorPoint = Vector2.new(0, 0.5);
+        Position = UDim2.new(0, 8, 0.5, 0);
+        Size = UDim2.new(0, 2, 0, 14);
+        ZIndex = 3;
+        Parent = HeaderBar;
+    });
+
+    Library:AddToRegistry(HeaderAccentDot, {
+        BackgroundColor3 = 'AccentColor';
+    });
+
+    local HeaderLine = Library:Create('Frame', {
+        BackgroundColor3 = Library.OutlineColor;
+        BorderSizePixel = 0;
+        Position = UDim2.new(0, 0, 1, -1);
+        Size = UDim2.new(1, 0, 0, 1);
+        ZIndex = 3;
+        Parent = HeaderBar;
     });
 
     local WindowLabel = Library:CreateLabel({
-        Position = UDim2.new(0, 7, 0, 0);
-        Size = UDim2.new(0, 0, 0, 25);
+        Position = UDim2.new(0, 16, 0, 0);
+        Size = UDim2.new(1, -24, 1, 0);
         Text = Config.Title or '';
         TextXAlignment = Enum.TextXAlignment.Left;
-        ZIndex = 1;
-        Parent = Inner;
-    });
-
-    local MainSectionOuter = Library:Create('Frame', {
-        BackgroundColor3 = Library.BackgroundColor;
-        BorderColor3 = Library.OutlineColor;
-        Position = UDim2.new(0, 8, 0, 25);
-        Size = UDim2.new(1, -16, 1, -33);
-        ZIndex = 1;
-        Parent = Inner;
-    });
-
-    Library:AddToRegistry(MainSectionOuter, {
-        BackgroundColor3 = 'BackgroundColor';
-        BorderColor3 = 'OutlineColor';
+        TextYAlignment = Enum.TextYAlignment.Center;
+        TextSize = 13;
+        TextColor3 = Color3.fromRGB(215, 218, 225);
+        ZIndex = 4;
+        Parent = HeaderBar;
     });
 
     local MainSectionInner = Library:Create('Frame', {
         BackgroundColor3 = Library.BackgroundColor;
-        BorderColor3 = Color3.new(0, 0, 0);
-        BorderMode = Enum.BorderMode.Inset;
-        Position = UDim2.new(0, 0, 0, 0);
-        Size = UDim2.new(1, 0, 1, 0);
+        BorderSizePixel = 0;
+        Position = UDim2.new(0, 0, 0, 26);
+        Size = UDim2.new(1, 0, 1, -26);
         ZIndex = 1;
-        Parent = MainSectionOuter;
+        Parent = Inner;
     });
 
     Library:AddToRegistry(MainSectionInner, {
         BackgroundColor3 = 'BackgroundColor';
     });
 
-    local TabArea = Library:Create('Frame', {
-        BackgroundTransparency = 1;
-        Position = UDim2.new(0, 8, 0, 8);
-        Size = UDim2.new(1, -16, 0, 21);
-        ZIndex = 1;
+    local TabAreaHolder = Library:Create('Frame', {
+        BackgroundColor3 = Color3.fromRGB(18, 19, 22);
+        BorderSizePixel = 0;
+        Position = UDim2.new(0, 0, 0, 0);
+        Size = UDim2.new(1, 0, 0, 26);
+        ZIndex = 2;
         Parent = MainSectionInner;
     });
 
+    local TabArea = Library:Create('Frame', {
+        BackgroundTransparency = 1;
+        Position = UDim2.new(0, 8, 0, 0);
+        Size = UDim2.new(1, -16, 1, 0);
+        ZIndex = 3;
+        Parent = TabAreaHolder;
+    });
+
     local TabListLayout = Library:Create('UIListLayout', {
-        Padding = UDim.new(0, Config.TabPadding);
+        Padding = UDim.new(0, 0);
         FillDirection = Enum.FillDirection.Horizontal;
         SortOrder = Enum.SortOrder.LayoutOrder;
         Parent = TabArea;
     });
 
+    local TabBarBottomLine = Library:Create('Frame', {
+        BackgroundColor3 = Library.OutlineColor;
+        BorderSizePixel = 0;
+        Position = UDim2.new(0, 0, 1, -1);
+        Size = UDim2.new(1, 0, 0, 1);
+        ZIndex = 4;
+        Parent = TabAreaHolder;
+    });
+
     local TabContainer = Library:Create('Frame', {
-        BackgroundColor3 = Library.MainColor;
-        BorderColor3 = Library.OutlineColor;
-        Position = UDim2.new(0, 8, 0, 30);
-        Size = UDim2.new(1, -16, 1, -38);
+        BackgroundColor3 = Library.BackgroundColor;
+        BorderSizePixel = 0;
+        Position = UDim2.new(0, 0, 0, 26);
+        Size = UDim2.new(1, 0, 1, -26);
         ZIndex = 2;
         Parent = MainSectionInner;
     });
-    
 
     Library:AddToRegistry(TabContainer, {
-        BackgroundColor3 = 'MainColor';
-        BorderColor3 = 'OutlineColor';
+        BackgroundColor3 = 'BackgroundColor';
     });
 
     function Window:SetWindowTitle(Title)
@@ -3195,7 +3244,7 @@ function Library:CreateWindow(...)
             });
 
             local BoxInner = Library:Create('Frame', {
-                BackgroundColor3 = Color3.fromRGB(19, 20, 23);
+                BackgroundColor3 = Color3.fromRGB(19, 20, 24);
                 BorderColor3 = Library.OutlineColor;
                 BorderMode = Enum.BorderMode.Inset;
                 Size = UDim2.new(1, 0, 1, 0);
