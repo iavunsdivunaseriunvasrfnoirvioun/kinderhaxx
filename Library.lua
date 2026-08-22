@@ -37,6 +37,9 @@ local Library = {
     RiskColor = Color3.fromRGB(255, 60, 60);
     SubTextColor = Color3.fromRGB(120, 124, 134);
 
+    BuildName = 'Developer';
+    BuildVersion = '1.0.0';
+
     Black = Color3.new(0, 0, 0);
     Font = Enum.Font.Code,
 
@@ -116,6 +119,17 @@ end;
 function Library:AttemptSave()
     if Library.SaveManager then
         Library.SaveManager:Save();
+    end;
+end;
+
+function Library:SetBuildType(buildName, versionStr)
+    Library.BuildName = buildName or Library.BuildName or 'Developer';
+    Library.BuildVersion = tostring(versionStr or Library.BuildVersion or '1.0.0'):gsub('^v', '');
+
+    if Library.FooterLeft and Library.FooterRight then
+        local hexColor = Library.AccentColor:ToHex();
+        Library.FooterLeft.Text = string.format('Build: <font color="#%s">%s</font>', hexColor, tostring(Library.BuildName));
+        Library.FooterRight.Text = string.format('[ <font color="#%s">v%s</font> ]', hexColor, tostring(Library.BuildVersion));
     end;
 end;
 
@@ -354,15 +368,15 @@ function Library:RemoveFromRegistry(Instance)
 end;
 
 function Library:UpdateColorsUsingRegistry()
-    -- TODO: Could have an 'active' list of objects
-    -- where the active list only contains Visible objects.
 
-    -- IMPL: Could setup .Changed events on the AddToRegistry function
-    -- that listens for the 'Visible' propert being changed.
-    -- Visible: true => Add to active list, and call UpdateColors function
-    -- Visible: false => Remove from active list.
 
-    -- The above would be especially efficient for a rainbow menu color or live color-changing.
+
+
+
+
+
+
+
 
     for Idx, Object in next, Library.Registry do
         for Property, ColorIdx in next, Object.Properties do
@@ -376,18 +390,18 @@ function Library:UpdateColorsUsingRegistry()
 end;
 
 function Library:GiveSignal(Signal)
-    -- Only used for signals not attached to library instances, as those should be cleaned up on object destruction by Roblox
+
     table.insert(Library.Signals, Signal)
 end
 
 function Library:Unload()
-    -- Unload all of the signals
+
     for Idx = #Library.Signals, 1, -1 do
         local Connection = table.remove(Library.Signals, Idx)
         Connection:Disconnect()
     end
 
-     -- Call our unload callback, maybe to undo some hooks etc
+
     if Library.OnUnload then
         Library.OnUnload()
     end
@@ -412,7 +426,7 @@ do
 
     function Funcs:AddColorPicker(Idx, Info)
         local ToggleLabel = self.TextLabel;
-        -- local Container = self.Container;
+
 
         assert(Info.Default, 'AddColorPicker: Missing default value.');
 
@@ -443,7 +457,7 @@ do
             Parent = ToggleLabel;
         });
 
-        -- Transparency image taken from https://github.com/matas3535/SplixPrivateDrawingLibrary/blob/main/Library.lua cus i'm lazy
+
         local CheckerFrame = Library:Create('ImageLabel', {
             BorderSizePixel = 0;
             Size = UDim2.new(0, 27, 0, 13);
@@ -453,10 +467,10 @@ do
             Parent = DisplayFrame;
         });
 
-        -- 1/16/23
-        -- Rewrote this to be placed inside the Library ScreenGui
-        -- There was some issue which caused RelativeOffset to be way off
-        -- Thus the color picker would never show
+
+
+
+
 
         local PickerFrameOuter = Library:Create('Frame', {
             Name = 'Color';
@@ -660,7 +674,7 @@ do
             Position = UDim2.fromOffset(5, 5);
             TextXAlignment = Enum.TextXAlignment.Left;
             TextSize = 14;
-            Text = ColorPicker.Title,--Info.Default;
+            Text = ColorPicker.Title,
             TextWrapped = false;
             ZIndex = 16;
             Parent = PickerFrameInner;
@@ -1011,7 +1025,7 @@ do
         local KeyPicker = {
             Value = Info.Default;
             Toggled = false;
-            Mode = Info.Mode or 'Toggle'; -- Always, Toggle, Hold
+            Mode = Info.Mode or 'Toggle';
             Type = 'KeyPicker';
             Callback = Info.Callback or function(Value) end;
             ChangedCallback = Info.ChangedCallback or function(New) end;
@@ -1405,7 +1419,7 @@ do
     end;
 
     function Funcs:AddButton(...)
-        -- TODO: Eventually redo this
+
         local Button = {};
         local function ProcessButtonParams(Class, Obj, ...)
             local Props = select(1, ...)
@@ -1760,28 +1774,28 @@ do
             end);
         end
 
-        -- https://devforum.roblox.com/t/how-to-make-textboxes-follow-current-cursor-position/1368429/6
-        -- thank you nicemike40 :)
+
+
 
         local function Update()
             local PADDING = 2
             local reveal = Container.AbsoluteSize.X
 
             if not Box:IsFocused() or Box.TextBounds.X <= reveal - 2 * PADDING then
-                -- we aren't focused, or we fit so be normal
+
                 Box.Position = UDim2.new(0, PADDING, 0, 0)
             else
-                -- we are focused and don't fit, so adjust position
+
                 local cursor = Box.CursorPosition
                 if cursor ~= -1 then
-                    -- calculate pixel width of text from start to cursor
+
                     local subtext = string.sub(Box.Text, 1, cursor-1)
                     local width = TextService:GetTextSize(subtext, Box.TextSize, Box.Font, Vector2.new(math.huge, math.huge)).X
 
-                    -- check if we're inside the box with the cursor
+
                     local currentCursorPos = Box.Position.X.Offset + width
 
-                    -- adjust if necessary
+
                     if currentCursorPos < PADDING then
                         Box.Position = UDim2.fromOffset(PADDING-width, 0)
                     elseif currentCursorPos > reveal - PADDING - 1 then
@@ -1928,7 +1942,7 @@ do
 
         ToggleRegion.InputBegan:Connect(function(Input)
             if Input.UserInputType == Enum.UserInputType.MouseButton1 and not Library:MouseIsOverOpenedFrame() then
-                Toggle:SetValue(not Toggle.Value) -- Why was it not like this from the start?
+                Toggle:SetValue(not Toggle.Value)
                 Library:AttemptSave();
             end;
         end);
@@ -2023,7 +2037,6 @@ do
             BackgroundColor3 = 'AccentColor';
         });
 
-        -- Solen.lua Centered Text Label inside the Slider Bar (e.g. 75%, 65%, 990m/s)
         local DisplayLabel = Library:CreateLabel({
             Position = UDim2.new(0, 0, 0, 0);
             Size = UDim2.new(1, 0, 1, 0);
@@ -2160,7 +2173,7 @@ do
             Value = Info.Multi and {};
             Multi = Info.Multi;
             Type = 'Dropdown';
-            SpecialType = Info.SpecialType; -- can be either 'Player' or 'Team'
+            SpecialType = Info.SpecialType;
             Callback = Info.Callback or function(Value) end;
         };
 
@@ -2669,7 +2682,7 @@ do
     end;
 end;
 
--- < Create other UI elements >
+
 do
     Library.NotificationArea = Library:Create('Frame', {
         BackgroundTransparency = 1;
@@ -2978,7 +2991,6 @@ function Library:CreateWindow(...)
         BorderColor3 = 'OutlineColor';
     });
 
-    -- Solen.lua Title Header (Electric Blue Text)
     local HeaderBar = Library:Create('Frame', {
         BackgroundTransparency = 1;
         Position = UDim2.new(0, 0, 0, 0);
@@ -3003,7 +3015,6 @@ function Library:CreateWindow(...)
         TextColor3 = 'AccentColor';
     });
 
-    -- Solen.lua Clean Horizontal Text Tabs Area
     local TabAreaHolder = Library:Create('Frame', {
         BackgroundTransparency = 1;
         Position = UDim2.new(0, 0, 0, 24);
@@ -3027,7 +3038,6 @@ function Library:CreateWindow(...)
         Parent = TabArea;
     });
 
-    -- Main Content Area Container
     local TabContainer = Library:Create('Frame', {
         BackgroundColor3 = Library.BackgroundColor;
         BorderColor3 = Library.OutlineColor;
@@ -3038,7 +3048,6 @@ function Library:CreateWindow(...)
         Parent = Inner;
     });
 
-    -- Solen.lua Blue Top Accent Highlight Line on main container box
     local ContainerTopAccent = Library:Create('Frame', {
         BackgroundColor3 = Library.AccentColor;
         BorderSizePixel = 0;
@@ -3057,7 +3066,6 @@ function Library:CreateWindow(...)
         BorderColor3 = 'OutlineColor';
     });
 
-    -- Solen.lua Bottom Footer Bar (Build: Developer  [ v1.0.0 ])
     local FooterBar = Library:Create('Frame', {
         BackgroundColor3 = Color3.fromRGB(14, 15, 18);
         BorderColor3 = Library.OutlineColor;
@@ -3068,10 +3076,11 @@ function Library:CreateWindow(...)
         Parent = Inner;
     });
 
+    local hexColor = Library.AccentColor:ToHex();
     local FooterLeft = Library:CreateLabel({
         Position = UDim2.new(0, 8, 0, 0);
         Size = UDim2.new(0.5, -8, 1, 0);
-        Text = 'Build: <font color="#008cf0">Developer</font>';
+        Text = string.format('Build: <font color="#%s">%s</font>', hexColor, tostring(Library.BuildName or 'Developer'));
         RichText = true;
         TextXAlignment = Enum.TextXAlignment.Left;
         TextYAlignment = Enum.TextYAlignment.Center;
@@ -3084,7 +3093,7 @@ function Library:CreateWindow(...)
     local FooterRight = Library:CreateLabel({
         Position = UDim2.new(0.5, 0, 0, 0);
         Size = UDim2.new(0.5, -8, 1, 0);
-        Text = '[ <font color="#008cf0">v1.0.0</font> ]';
+        Text = string.format('[ <font color="#%s">v%s</font> ]', hexColor, tostring(Library.BuildVersion or '1.0.0'));
         RichText = true;
         TextXAlignment = Enum.TextXAlignment.Right;
         TextYAlignment = Enum.TextYAlignment.Center;
@@ -3093,6 +3102,13 @@ function Library:CreateWindow(...)
         ZIndex = 3;
         Parent = FooterBar;
     });
+
+    Library.FooterLeft = FooterLeft;
+    Library.FooterRight = FooterRight;
+
+    function Window:SetBuildType(buildName, versionStr)
+        Library:SetBuildType(buildName, versionStr);
+    end;
 
     function Window:SetWindowTitle(Title)
         WindowLabel.Text = Title;
@@ -3227,7 +3243,6 @@ function Library:CreateWindow(...)
                 BorderColor3 = 'OutlineColor';
             });
 
-            -- Solen.lua Blue Top Highlight Line on Groupbox
             local GroupboxTopHighlight = Library:Create('Frame', {
                 BackgroundColor3 = Library.AccentColor;
                 BorderSizePixel = 0;
@@ -3319,7 +3334,7 @@ function Library:CreateWindow(...)
             local BoxInner = Library:Create('Frame', {
                 BackgroundColor3 = Library.BackgroundColor;
                 BorderColor3 = Color3.new(0, 0, 0);
-                -- BorderMode = Enum.BorderMode.Inset;
+
                 Size = UDim2.new(1, -2, 1, -2);
                 Position = UDim2.new(0, 1, 0, 1);
                 ZIndex = 4;
@@ -3475,7 +3490,7 @@ function Library:CreateWindow(...)
                 Tab:AddBlank(3);
                 Tab:Resize();
 
-                -- Show first tab (number is 2 cus of the UIListLayout that also sits in that instance)
+
                 if #TabboxButtons:GetChildren() == 2 then
                     Tab:Show();
                 end;
@@ -3502,7 +3517,7 @@ function Library:CreateWindow(...)
             end;
         end);
 
-        -- This was the first tab added, so we show it by default.
+
         if #TabContainer:GetChildren() == 1 then
             Tab:ShowTab();
         end;
@@ -3535,11 +3550,11 @@ function Library:CreateWindow(...)
         ModalElement.Modal = Toggled;
 
         if Toggled then
-            -- A bit scuffed, but if we're going from not toggled -> toggled we want to show the frame immediately so that the fade is visible.
+
             Outer.Visible = true;
 
             task.spawn(function()
-                -- TODO: add cursor fade?
+
                 local State = InputService.MouseIconEnabled;
 
                 local Cursor = Drawing.new('Triangle');
